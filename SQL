@@ -1,0 +1,42 @@
+import sqlite3
+
+DBConnection = sqlite3.connect("Archive.db")
+Cursor = DBConnection.cursor()
+
+with DBConnection:
+    Cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY ,
+            username TEXT NOT NULL,
+            email Text NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+
+
+def InsertNew(Values):
+    with DBConnection:
+        Cursor.execute("INSERT INTO users (username, email,password) VALUES (?, ?)", (Values[0], Values[1], Values[2]))
+
+
+def Reset():
+    with DBConnection:
+        Cursor.execute("SELECT MAX(id) FROM users")
+        table_size = Cursor.fetchone()
+        maxsize = int(table_size[0])
+        for i in range(2, maxsize + 1):
+            Cursor.execute("DELETE FROM users WHERE id = ?", (i,))
+
+
+def UsernameFind(Value):
+    with DBConnection:
+        Cursor.execute("SELECT id FROM users WHERE username == ?", (Value,))
+        val = Cursor.fetchone()
+        return bool(val)
+
+
+def PasswordFind(Value):
+    with DBConnection:
+        Cursor.execute("SELECT id FROM users WHERE password == ?", (Value,))
+        val = Cursor.fetchone()
+        return bool(val)
