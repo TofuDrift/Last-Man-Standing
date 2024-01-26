@@ -1,0 +1,250 @@
+import pygame
+import sys
+import time
+from pygame.locals import *
+
+
+class Button:
+   def __init__(self, x, y, width, height, color, text, text_color, border):
+       self.rect = pygame.Rect(x, y, width, height)
+       self.rect.center = x, y
+       self.text = text
+       self.color = color
+       self.text_color = text_color
+       if border is None:
+           self.border = 0
+       else:
+           self.border = border
+
+   def draw(self, screen):
+       pygame.draw.rect(screen, self.color, self.rect, self.border, 10)
+       font = pygame.font.Font(None, 25)
+       text = font.render(self.text, False, self.text_color)
+       text_rect = text.get_rect(center=self.rect.center)
+       screen.blit(text, text_rect)
+
+   def is_clicked(self, pos):
+       return self.rect.collidepoint(pos)
+
+
+class Title:
+   def __init__(self, x, y, width, height, color, text, text_color, border):
+       self.rect = pygame.Rect(x, y, width, height)
+       self.rect.center = x, y
+       self.text = text
+       self.color = color
+       self.text_color = text_color
+       if border is None:
+           self.border = 0
+       else:
+           self.border = border
+
+   def draw(self, screen):
+       #pygame.draw.rect(screen, self.color, self.rect, self.border, 15)
+       font = pygame.font.Font(None, 40)
+       text = font.render(self.text, False, self.text_color)
+       text_rect = text.get_rect(center=self.rect.center)
+       screen.blit(text, text_rect)
+
+
+def handle_menu_event(mode):
+   if mode == 0:
+       if event.type == MOUSEBUTTONDOWN:
+           mouse_pos = pygame.mouse.get_pos()
+           if quit_button.is_clicked(mouse_pos):
+               pygame.quit()
+               sys.exit()
+           elif play_menu_button.is_clicked(mouse_pos):
+               print("Going to Play Menu")
+               return 1
+           elif leaderboards_menu.is_clicked(mouse_pos):
+               print("Going to leaderboards")
+               return 2
+           elif settings.is_clicked(mouse_pos):
+               print("Going to settings")
+               return 3
+       return 0
+
+   elif mode == 1:
+       if event.type == MOUSEBUTTONDOWN:
+           mouse_pos = pygame.mouse.get_pos()
+           if return_button.is_clicked(mouse_pos):
+               return 0
+       return 1
+
+   elif mode == 2:
+       if event.type == MOUSEBUTTONDOWN:
+           mouse_pos = pygame.mouse.get_pos()
+           if return_button.is_clicked(mouse_pos):
+               return 0
+       return 2
+
+   elif mode == 3:
+       if event.type == MOUSEBUTTONDOWN:
+           mouse_pos = pygame.mouse.get_pos()
+           if return_button.is_clicked(mouse_pos):
+               return 0
+       return 3
+
+
+def update_ui(mode):
+   if mode == 0:  # Menu UI
+       # pygame.draw.rect(window_surface, pygame.Color('#422431'), pygame.Rect(325, 25, 350, 400), 5, 25)
+       Title(window_width/2, 75, 325, 75, '#FFFFFF', "Last Man Standing", '#000000', 0).draw(window_surface)
+
+       play_menu_button.draw(window_surface)
+       leaderboards_menu.draw(window_surface)
+       settings.draw(window_surface)
+       quit_button.draw(window_surface)
+   elif mode == 1:  # Play Menu UI
+       # window_surface.fill(pygame.Color('#FFFFFF'))
+       #pygame.draw.rect(window_surface, '#36454F', pygame.Rect(125, 25, 750, 450), 2, 25)
+
+       start_button.draw(window_surface)
+       return_button.draw(window_surface)
+   elif mode == 2:  # Leaderboards UI
+       # window_surface.fill(pygame.Color('#FFFFFF'))
+       #pygame.draw.rect(window_surface, pygame.Color('#36454F'), pygame.Rect(125, 25, 750, 450), 2, 25)
+       Title(window_width / 2, 25, 725, 75, '#36454F', "Leaderboards", '#FFFFFF', 2).draw(window_surface)
+       Title((window_width / 2), 75, 275, 50, '#36454F', "General", '#FFFFFF', 2).draw(window_surface)
+       #Title((window_width / 2) + 250, 75, 275, 50, '#36454F', "Nightmare Mode", '#FFFFFF', 2).draw(window_surface)
+
+       fastest_time_button.draw(window_surface)
+       most_money_button.draw(window_surface)
+       num_kills_deaths_button.draw(window_surface)
+
+       #time_survived_button.draw(window_surface)
+       #money_earned.draw(window_surface)
+       #num_kills_button.draw(window_surface)
+
+       return_button.draw(window_surface)
+   elif mode == 3:  # Settings UI
+       # window_surface.fill(pygame.Color('#FFFFFF'))
+       #pygame.draw.rect(window_surface, pygame.Color('#36454F'), pygame.Rect(125, 25, 750, 450), 2, 25)
+
+       return_button.draw(window_surface)
+   return
+
+
+pygame.init()
+
+window_width, window_height = 1000, 500
+
+pygame.display.set_caption('Quick Start')
+window_surface = pygame.display.set_mode((window_width, window_height))
+
+idle_right = pygame.image.load("Idle.png")
+idle_left = pygame.transform.flip(idle_right, True, False)
+player = idle_right
+flip_player = False
+
+player_frames = []
+for i in range(1, 9):
+   frame = pygame.image.load(f"Walk-{i}.png")
+   frame = pygame.transform.scale(frame, (100, 100))
+   player_frames.append(frame)
+
+player_frame_index = 0
+animation_speed = 5
+delay_time = 0
+
+background_frames = []
+for i in range(1, 9):
+   frame = pygame.image.load(f"Background-{i}.png")
+   frame = pygame.transform.scale(frame, (1000, 500))
+   background_frames.append(frame)
+
+background_frame_index = 0
+frame_timer = pygame.time.get_ticks()
+frame_delay = 95
+
+# Universal Buttons
+return_button = Button((window_width / 2), 425, 150, 50, '#FFFFFF', "Return", '#FFFFFF', 2)
+
+# Menu Buttons
+play_menu_button = Button((window_width / 2), 150, 150, 50, '#FFFFFF', "Start", '#000000', 2)
+leaderboards_menu = Button((window_width / 2), 210, 150, 50, '#FFFFFF', "Leaderboards", '#000000', 2)
+settings = Button((window_width / 2), 270, 150, 50, '#FFFFFF', "Settings", '#000000', 2)
+quit_button = Button((window_width / 2), 330, 150, 50, '#FFFFFF', "Quit", '#FF0000', 2)
+
+# Play Menu Buttons
+start_button = Button((window_width / 2), 150, 150, 50, '#FFFFFF', "Play", '#FFFFFF', 2)
+
+# Leaderboards Buttons
+fastest_time_button = Button((window_width / 2) - 250, 150, 200, 25, '#36454F', "Fastest Time", '#000000', 2)
+most_money_button = Button((window_width / 2), 150, 200, 25, '#36454F', "Most Money", '#000000', 2)
+num_kills_deaths_button = Button((window_width / 2) + 250, 150, 200, 25, '#36454F', "N.o of Kills & Deaths", '#000000', 2)
+# ---
+#time_survived_button = Button((window_width / 2) + 150, 230, 200, 25, '#36454F', "Time Survived", '#000000', 2)
+#money_earned = Button((window_width / 2) + 150, 290, 200, 25, '#36454F', "Money Earned", '#000000', 2)
+#num_kills_button = Button((window_width / 2) + 150, 350, 200, 25, '#36454F', "N.o of Kills", '#000000', 2)
+
+# Settings
+login_page_button = Button((window_width / 2), 210, 150, 50, '#FFFFFF', "Login", '#000000', 2)
+register_page_button = Button((window_width / 2), 210, 150, 50, '#FFFFFF', "Register", '#000000', 2)
+
+mode = 0
+
+x = 0
+flip = False
+vel = 2
+
+is_running = True
+clock = pygame.time.Clock()
+while is_running:
+   for event in pygame.event.get():
+       if event.type == pygame.QUIT:
+           is_running = False
+
+       mode = handle_menu_event(mode)
+
+   current_time = pygame.time.get_ticks()
+   if current_time - frame_timer >= frame_delay:
+       background_frame_index = (background_frame_index + 1) % len(background_frames)
+       frame_timer = current_time
+
+   window_surface.blit(background_frames[background_frame_index], (0, 0))
+
+   mouse_pos_x = pygame.mouse.get_pos()[0]
+   # Boundary Check
+
+   if mouse_pos_x <= 0 and x <= 0:
+       x = 0
+       player = idle_left
+       window_surface.blit(player, (x, 390))
+   elif mouse_pos_x >= window_width and x >= window_width:
+       x = window_width - 50
+       player = idle_right
+       window_surface.blit(player, (x, 390))
+   else:
+       if mouse_pos_x == x or mouse_pos_x-1 <= x <= mouse_pos_x+1:
+           x = mouse_pos_x
+           if flip:
+               player = idle_left
+               window_surface.blit(player, (x - 50, 390))
+           else:
+               player = idle_right
+               window_surface.blit(player, (x - 50, 390))
+       else:
+           if mouse_pos_x > x:
+               x += vel
+               flip = False
+               if delay_time >= animation_speed:  # Check if enough time has passed based on animation speed
+                   player_frame_index = (player_frame_index + 1) % len(player_frames)
+                   delay_time = 0  # Reset the delay time
+               else:
+                   delay_time += clock.get_time()  # Accumulate the elapsed time
+               window_surface.blit(player_frames[player_frame_index], (x - 50, 390))
+           elif mouse_pos_x < x:
+               x -= vel
+               flip = True
+               if delay_time >= animation_speed:  # Check if enough time has passed based on animation speed
+                   player_frame_index = (player_frame_index + 1) % len(player_frames)
+                   delay_time = 0  # Reset the delay time
+               else:
+                   delay_time += clock.get_time()  # Accumulate the elapsed time
+               window_surface.blit(pygame.transform.flip(player_frames[player_frame_index], True, False), (x - 50, 390))
+
+   update_ui(mode)
+   pygame.display.update()
+   clock.tick(60)
