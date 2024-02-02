@@ -1,0 +1,118 @@
+import pygame
+import sys
+import time
+import math
+
+from Methods import *
+
+
+class Button:
+    def __init__(self, x, y, image1, image2):
+        self.image1 = imageload(image1)
+        self.image2 = imageload(image2)
+        self.image = ""
+        self.rect = self.image1.get_rect()
+        self.rect.left, self.rect.centery = x, y
+        self.isHover = False
+
+    def draw(self, screen):
+        if self.isHover:
+            self.image = self.image2
+        else:
+            self.image = self.image1
+        mousepos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(mousepos):
+            self.isHover = True
+        else:
+            self.isHover = False
+        screen.blit(self.image, self.rect)
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)
+
+
+def handle_menu_event(mode):
+    if mode == 0:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if quit_button.is_clicked(mouse_pos):
+                pygame.quit()
+                sys.exit()
+            elif play_button.is_clicked(mouse_pos):
+                print("Going to Play Menu")
+                return 1
+            elif leaderboards_button.is_clicked(mouse_pos):
+                print("Going to leaderboards")
+                return 2
+            elif options_button.is_clicked(mouse_pos):
+                print("Going to settings")
+                return 3
+        return 0
+
+    elif mode == 1:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 0
+        return 1
+
+    elif mode == 2:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 0
+        return 2
+
+    elif mode == 3:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 0
+        return 3
+
+
+def update_ui(mode):
+    if mode == 0:  # Menu UI
+        play_button.draw(window_surface)
+        leaderboards_button.draw(window_surface)
+        options_button.draw(window_surface)
+        quit_button.draw(window_surface)
+    elif mode == 1:  # Play UI
+        quit_button.draw(window_surface)
+    elif mode == 2:  # Leaderboards UI
+        quit_button.draw(window_surface)
+    elif mode == 3:  # Options UI
+        quit_button.draw(window_surface)
+
+
+pygame.init()
+
+window_width, window_height = 1000, 500
+
+pygame.display.set_caption('Quick Start')
+window_surface = pygame.display.set_mode((window_width, window_height))
+
+background = imageload("Space Background")
+play_button = Button(10, 225, "Play_Unselected", "Play_Selected")
+leaderboards_button = Button(10, 300, "Leaderboards_Unselected", "Leaderboards_Selected")
+options_button = Button(10, 375, "Options_Unselected", "Options_Selected")
+quit_button = Button(10, 450, "Quit_Unselected", "Quit_Selected")
+
+mode = 0
+
+is_running = True
+clock = pygame.time.Clock()
+while is_running:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            is_running = False
+
+        mode = handle_menu_event(mode)
+
+    window_surface.blit(background, (0, 0))
+
+
+    update_ui(mode)
+    pygame.display.update()
+    clock.tick(60)
