@@ -1,0 +1,51 @@
+from Gremlin import *
+
+def GetEmail():
+    email = input("Enter Email: ")
+    if not EmailFind(email):
+        return GetEmail(), print("Email already exist in database.")
+    if not email.endswith("@gmail.com"):
+        return GetEmail(), print("Email does not end with '@gmail.com'.")
+    return email
+
+def GetPassword():  
+    password = input("Enter Password: ")
+    if not PasswordCheck( password):
+        return GetPassword()
+    return password
+
+
+def PasswordCheck(password):
+    upper = False
+    num = False
+    special = False
+
+    if len(password) >= 8:
+        for i in password:
+            if i.isupper():
+                upper = True
+        for i in password:
+            if i.isalnum():
+                num = True
+
+        if not password.isalnum():
+            special = True
+
+        if upper and num and special:
+            return True
+
+        if not special:
+            print("Password does not contain special characters.")
+        if not upper:
+            print("Password does not contain uppercase.")
+        if not num:
+            print("Password does not contain lowercase or numerical value.")
+        return False
+
+    else:
+        print("Password is not 8 characters long.")
+        return False
+
+def Register():
+    email = GetEmail()
+    password = GetPassword()
