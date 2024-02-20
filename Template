@@ -5,11 +5,10 @@ import math
 
 from Methods import *
 
-
 class Button:
     def __init__(self, x, y, image1, image2):
-        self.image1 = imageload(image1)
-        self.image2 = imageload(image2)
+        self.image1 = imageload(image1, "Unselected")
+        self.image2 = imageload(image2, "Selected")
         self.image = ""
         self.rect = self.image1.get_rect()
         self.rect.left, self.rect.centery = x, y
@@ -78,11 +77,11 @@ def update_ui(mode):
         options_button.draw(window_surface)
         quit_button.draw(window_surface)
     elif mode == 1:  # Play UI
-        quit_button.draw(window_surface)
+        return_button.draw(window_surface)
     elif mode == 2:  # Leaderboards UI
-        quit_button.draw(window_surface)
+        return_button.draw(window_surface)
     elif mode == 3:  # Options UI
-        quit_button.draw(window_surface)
+        return_button.draw(window_surface)
 
 
 pygame.init()
@@ -92,11 +91,16 @@ window_width, window_height = 1000, 500
 pygame.display.set_caption('Quick Start')
 window_surface = pygame.display.set_mode((window_width, window_height))
 
-background = imageload("Space Background")
+background = pygame.image.load("Space Background.png")
+
+# Main Menu Button
 play_button = Button(10, 225, "Play_Unselected", "Play_Selected")
 leaderboards_button = Button(10, 300, "Leaderboards_Unselected", "Leaderboards_Selected")
 options_button = Button(10, 375, "Options_Unselected", "Options_Selected")
 quit_button = Button(10, 450, "Quit_Unselected", "Quit_Selected")
+
+# Universal Button
+return_button = Button(10, 450, "Return_Unselected", "Return_Selected")
 
 mode = 0
 
