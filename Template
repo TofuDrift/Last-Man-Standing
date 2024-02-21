@@ -3,7 +3,7 @@ import sys
 import time
 import math
 
-from Methods import *
+from Class import *
 
 class Button:
     def __init__(self, x, y, image1, image2):
@@ -72,6 +72,7 @@ def handle_menu_event(mode):
 
 def update_ui(mode):
     if mode == 0:  # Menu UI
+        window_surface.blit(title, title.get_rect(center=(500,75)))
         play_button.draw(window_surface)
         leaderboards_button.draw(window_surface)
         options_button.draw(window_surface)
@@ -88,21 +89,29 @@ pygame.init()
 
 window_width, window_height = 1000, 500
 
-pygame.display.set_caption('Quick Start')
+pygame.display.set_caption('Menu')
 window_surface = pygame.display.set_mode((window_width, window_height))
 
 background = pygame.image.load("Space Background.png")
 
+font = pygame.font.Font(None, 64)
+title = font.render("Last Man Standing", True, (255,255,255))
+
 # Main Menu Button
-play_button = Button(10, 225, "Play_Unselected", "Play_Selected")
-leaderboards_button = Button(10, 300, "Leaderboards_Unselected", "Leaderboards_Selected")
-options_button = Button(10, 375, "Options_Unselected", "Options_Selected")
-quit_button = Button(10, 450, "Quit_Unselected", "Quit_Selected")
+play_button = Button(10, 315, "Play_Unselected", "Play_Selected")
+leaderboards_button = Button(10, 390, "Leaderboards_Unselected", "Leaderboards_Selected")
+options_button = Button(10, 465, "Options_Unselected", "Options_Selected")
+quit_button = Button(window_width-150-10, 465, "Quit_Unselected", "Quit_Selected")
 
 # Universal Button
-return_button = Button(10, 450, "Return_Unselected", "Return_Selected")
+return_button = Button(window_width-150-10, 465, "Return_Unselected", "Return_Selected")
+
 
 mode = 0
+
+motion_up = False
+x,y = 500, 250
+background_rect = background.get_rect(center=(x, y))
 
 is_running = True
 clock = pygame.time.Clock()
@@ -114,9 +123,20 @@ while is_running:
 
         mode = handle_menu_event(mode)
 
-    window_surface.blit(background, (0, 0))
+    background_rect = background.get_rect(center=(500, y))
+    if not motion_up:
+        if y <= 200:
+            motion_up = True
+        y -= 0.2
+    elif motion_up:
+        if y == 400:
+            motion_up = False
+        y += 0.2
+    print(background_rect)
+    window_surface.blit(background, background_rect)
 
 
     update_ui(mode)
     pygame.display.update()
     clock.tick(60)
+
