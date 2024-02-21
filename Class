@@ -1,0 +1,27 @@
+from Methods import *
+class Button:
+    def __init__(self, x, y, image1, image2):
+        self.image1 = imageload(image1, "Unselected")
+        self.image2 = imageload(image2, "Selected")
+        self.image = ""
+        self.rect = self.image1.get_rect()
+        self.rect.left, self.rect.centery = x, y
+        self.isHover = False
+
+    def draw(self, screen):
+        if self.isHover:
+            self.image = self.image2
+        else:
+            self.image = self.image1
+        mousepos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(mousepos):
+            self.isHover = True
+        else:
+            self.isHover = False
+        screen.blit(self.image, self.rect)
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)
+
+
+#class InputBox
