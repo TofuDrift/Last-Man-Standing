@@ -125,15 +125,17 @@ while is_running:
 
     background_rect = background.get_rect(center=(500, y))
     if not motion_up:
-        if y <= 200:
-            motion_up = True
         y -= 0.2
-    elif motion_up:
-        if y == 400:
-            motion_up = False
+        if y <= 240:
+            motion_up = True
+    else:
         y += 0.2
-    print(background_rect)
+        if y >= 260:
+            motion_up = False
+
     window_surface.blit(background, background_rect)
+
+
 
 
     update_ui(mode)
