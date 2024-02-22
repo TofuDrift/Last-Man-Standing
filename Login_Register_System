@@ -1,51 +1,86 @@
-from Gremlin import *
+from Methods import *
+from Class import Button
 
-def GetEmail():
-    email = input("Enter Email: ")
-    if not EmailFind(email):
-        return GetEmail(), print("Email already exist in database.")
-    if not email.endswith("@gmail.com"):
-        return GetEmail(), print("Email does not end with '@gmail.com'.")
-    return email
+def handle_menu_event(mode):
+    if mode == 0:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if login_button.is_clicked(mouse_pos):
+                print("Going to Login Page")
+                return 1
+            elif register_button.is_clicked(mouse_pos):
+                print("Going to Register Page")
+                return 2
+            elif reset_password_button.is_clicked(mouse_pos):
+                print("Going to Reset Password")
+                return 3
+        return 0
 
-def GetPassword():  
-    password = input("Enter Password: ")
-    if not PasswordCheck( password):
-        return GetPassword()
-    return password
+    elif mode == 1:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 0
+        return 1
+
+    elif mode == 2:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 0
+        return 2
+
+    elif mode == 3:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 0
+        return 3
+
+def update_ui(mode):
+    if mode == 0:  # Menu UI
+        login_button.draw(window_surface)
+        register_button.draw(window_surface)
+        reset_password_button.draw(window_surface)
+        return_button.draw(window_surface)
+    elif mode == 1:  # Login UI
+        return_button.draw(window_surface)
+    elif mode == 2:  # Register UI
+        return_button.draw(window_surface)
+    elif mode == 3:  # Reset Password UI
+        return_button.draw(window_surface)
+
+pygame.init()
+
+window_width, window_height = 1000, 500
+
+pygame.display.set_caption('Quick Start')
+window_surface = pygame.display.set_mode((window_width, window_height))
+
+background = pygame.image.load("Space Background.png")
+
+login_button = Button(10, 315, "Login_Unselected", "Login_Selected")
+register_button = Button(10, 390, "Register_Unselected", "Register_Selected")
+reset_password_button = Button(10, 465, "Reset_Password_Unselected", "Reset_Password_Selected")
+submit_button = Button(750, 300, "Submit_Unselected", "Submit_Selected")
+return_button = Button(window_width-150-10, 465, "Return_Unselected", "Return_Selected")
+
+mode = 0
+
+is_running = True
+clock = pygame.time.Clock()
+while is_running:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            is_running = False
+
+        mode = handle_menu_event(mode)
+
+    window_surface.blit(background, (0, 0))
 
 
-def PasswordCheck(password):
-    upper = False
-    num = False
-    special = False
+    update_ui(mode)
+    pygame.display.update()
+    clock.tick(60)
 
-    if len(password) >= 8:
-        for i in password:
-            if i.isupper():
-                upper = True
-        for i in password:
-            if i.isalnum():
-                num = True
-
-        if not password.isalnum():
-            special = True
-
-        if upper and num and special:
-            return True
-
-        if not special:
-            print("Password does not contain special characters.")
-        if not upper:
-            print("Password does not contain uppercase.")
-        if not num:
-            print("Password does not contain lowercase or numerical value.")
-        return False
-
-    else:
-        print("Password is not 8 characters long.")
-        return False
-
-def Register():
-    email = GetEmail()
-    password = GetPassword()
