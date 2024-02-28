@@ -1,0 +1,49 @@
+import pygame
+
+class InputBox:
+    def __init__(self, label, masked, x, y, width, height, activated):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.rect_label = pygame.Rect(x - (width // 2) - 10, y, width // 2, height)
+        self.rect_label_center = width//2 , height //2
+        self.label = label
+        self.masked = masked
+        self.activated = activated
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, '#000000', self.rect, 2)
+        label = pygame.font.Font(None, 25).render(self.label, False, "#000000")
+        label.get_rect(center=self.rect_label_center)
+        screen.blit(label, self.rect_label)
+
+    def event_handler(self):
+        if pygame.event == pygame.MOUSEBUTTONDOWN:
+            self.activated = True
+        else:
+            self.activated = False
+            
+        if pygame.key.get_pressed():
+            
+
+demo = InputBox("Email:", False, 500, 250, 100, 25)
+
+pygame.init()
+
+window_width, window_height = 1000, 500
+
+pygame.display.set_caption('Menu')
+window_surface = pygame.display.set_mode((window_width, window_height))
+
+window_surface.fill("#FFFFFF")
+
+is_running = True
+clock = pygame.time.Clock()
+while is_running:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            is_running = False
+
+    demo.draw(window_surface)
+
+    pygame.display.update()
+    clock.tick(60)
