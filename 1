@@ -6,25 +6,34 @@ class InputBox:
         self.rect_label = pygame.Rect(x - (width // 2) - 10, y, width // 2, height)
         self.rect_label_center = width//2 , height //2
         self.label = label
+        self.text = "Click me"
         self.masked = masked
         self.activated = activated
+
 
     def draw(self, screen):
         pygame.draw.rect(screen, '#000000', self.rect, 2)
         label = pygame.font.Font(None, 25).render(self.label, False, "#000000")
         label.get_rect(center=self.rect_label_center)
+        text =  pygame.font.Font(None, 25).render(self.text, False, "#000000")
+        screen.blit(text, self.rect)
         screen.blit(label, self.rect_label)
 
     def event_handler(self):
-        if pygame.event == pygame.MOUSEBUTTONDOWN:
-            self.activated = True
-        else:
-            self.activated = False
-            
-        if pygame.key.get_pressed():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.activated = True
+            else:
+                self.activated = False
+
+        if self.activated:
+            if pygame.event == pygame.KEYDOWN:
+                self.text += event.unicode
+
+
             
 
-demo = InputBox("Email:", False, 500, 250, 100, 25)
+demo = InputBox("Email:", False, 500, 250, 100, 25, False)
 
 pygame.init()
 
@@ -42,6 +51,8 @@ while is_running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             is_running = False
+
+        demo.event_handler()
 
     demo.draw(window_surface)
 
