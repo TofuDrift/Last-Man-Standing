@@ -29,7 +29,49 @@ class Button:
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
 
+class InputBox:
+    def __init__(self, label, masked, x, y, width, height, activated):
+        self.font = None
 
+        self.rect_label = pygame.Rect(x - (width / 4), y + (height / 4), width // 2, height)
+        self.label = label
+
+        self.textbox_rect = pygame.Rect(x, y, width, height)
+        self.rect_text = pygame.Rect(x+5, y + (height / 4), width // 2, height)
+        self.text = ""
+
+        self.masked = masked
+        self.activated = activated
+
+
+    def draw(self, screen):
+        self.font = pygame.font.Font(None, 20)
+        label = self.font.render(self.label, False, "#FFFFFF")
+        text =  self.font.render(self.text, False, "#FFFFFF")
+
+        if not self.activated:
+
+            pygame.draw.rect(screen, '#FFFFFF', self.textbox_rect, 2)
+        else:
+            pygame.draw.rect(screen, '#00FF00', self.textbox_rect, 2)
+
+
+        screen.blit(text, self.rect_text)
+        screen.blit(label, self.rect_label)
+
+    def event_handler(self):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.textbox_rect.collidepoint(event.pos):
+                self.activated = True
+            else:
+                self.activated = False
+
+        if self.activated:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
 def handle_menu_event(mode):
     if mode == 0:
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -44,7 +86,7 @@ def handle_menu_event(mode):
                 print("Going to leaderboards")
                 return 2
             elif options_button.is_clicked(mouse_pos):
-                print("Going to settings")
+                print("Going to options")
                 return 3
         return 0
 
@@ -67,7 +109,25 @@ def handle_menu_event(mode):
             mouse_pos = pygame.mouse.get_pos()
             if return_button.is_clicked(mouse_pos):
                 return 0
+            elif login_button.is_clicked(mouse_pos):
+                return 4
+            elif register_button.is_clicked(mouse_pos):
+                return 5
         return 3
+
+    elif mode == 4:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 3
+        return 4
+
+    elif mode == 5:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if return_button.is_clicked(mouse_pos):
+                return 3
+        return 5
 
 
 def update_ui(mode):
@@ -82,8 +142,13 @@ def update_ui(mode):
     elif mode == 2:  # Leaderboards UI
         return_button.draw(window_surface)
     elif mode == 3:  # Options UI
+        login_button.draw(window_surface)
+        register_button.draw(window_surface)
         return_button.draw(window_surface)
-
+    elif mode == 4:
+        return_button.draw(window_surface)
+    elif mode == 5:
+        return_button.draw(window_surface)
 
 pygame.init()
 
@@ -103,9 +168,15 @@ leaderboards_button = Button(10, 390, "Leaderboards_Unselected", "Leaderboards_S
 options_button = Button(10, 465, "Options_Unselected", "Options_Selected")
 quit_button = Button(window_width-150-10, 465, "Quit_Unselected", "Quit_Selected")
 
+# Options
+login_button = Button(10, 315, "Login_Unselected", "Login_Selected")
+register_button = Button(10, 390, "Register_Unselected", "Register_Selected")
+
+
 # Universal Button
 return_button = Button(window_width-150-10, 465, "Return_Unselected", "Return_Selected")
 
+email = InputBox("Email:", False, 450, 200, 200, 25, False)
 
 mode = 0
 
@@ -122,6 +193,7 @@ while is_running:
             is_running = False
 
         mode = handle_menu_event(mode)
+        email.event_handler()
 
     background_rect = background.get_rect(center=(500, y))
     if not motion_up:
@@ -134,9 +206,6 @@ while is_running:
             motion_up = False
 
     window_surface.blit(background, background_rect)
-
-
-
 
     update_ui(mode)
     pygame.display.update()
