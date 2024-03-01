@@ -33,12 +33,13 @@ class InputBox:
     def __init__(self, label, masked, x, y, width, height, activated):
         self.font = None
 
-        self.rect_label = pygame.Rect(x - (width / 4), y + (height / 4), width // 2, height)
+        self.rect_label = pygame.Rect(x, y - 20, width // 2, height)
         self.label = label
 
         self.textbox_rect = pygame.Rect(x, y, width, height)
         self.rect_text = pygame.Rect(x+5, y + (height / 4), width // 2, height)
         self.text = ""
+        self.store_text = ""
 
         self.masked = masked
         self.activated = activated
@@ -71,7 +72,12 @@ class InputBox:
                 if event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 else:
-                    self.text += event.unicode
+                    if event.key not in [pygame.K_TAB, pygame.K_KP_ENTER, pygame.K_RETURN]:
+                        if self.masked:
+                            self.text += "*"
+                            self.store_text += event.unicode
+                        else:
+                            self.text += event.unicode
 def handle_menu_event(mode):
     if mode == 0:
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -145,9 +151,15 @@ def update_ui(mode):
         login_button.draw(window_surface)
         register_button.draw(window_surface)
         return_button.draw(window_surface)
-    elif mode == 4:
+    elif mode == 4: # Login
+        email.draw(window_surface)
+        password_1.draw(window_surface)
         return_button.draw(window_surface)
-    elif mode == 5:
+    elif mode == 5: # Register
+        email.draw(window_surface)
+        username.draw(window_surface)
+        password_1.draw(window_surface)
+        password_2.draw(window_surface)
         return_button.draw(window_surface)
 
 pygame.init()
@@ -177,6 +189,10 @@ register_button = Button(10, 390, "Register_Unselected", "Register_Selected")
 return_button = Button(window_width-150-10, 465, "Return_Unselected", "Return_Selected")
 
 email = InputBox("Email:", False, 450, 200, 200, 25, False)
+username = InputBox("Username:", False, 450, 250, 200, 25, False)
+password_1 = InputBox("Password:", True, 450, 300, 200, 25, False)
+password_2 = InputBox("Confirm Password:", True, 450, 350, 200, 25, False)
+
 
 mode = 0
 
@@ -194,6 +210,9 @@ while is_running:
 
         mode = handle_menu_event(mode)
         email.event_handler()
+        username.event_handler()
+        password_1.event_handler()
+        password_2.event_handler()
 
     background_rect = background.get_rect(center=(500, y))
     if not motion_up:
