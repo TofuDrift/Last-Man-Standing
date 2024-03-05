@@ -30,7 +30,7 @@ class Button:
         return self.rect.collidepoint(pos)
 
 class InputBox:
-    def __init__(self, label, masked, x, y, width, height, activated):
+    def __init__(self, label, x, y, width, height, masked=False):
         self.font = None
 
         self.rect_label = pygame.Rect(x, y - 20, width // 2, height)
@@ -42,7 +42,7 @@ class InputBox:
         self.store_text = ""
 
         self.masked = masked
-        self.activated = activated
+        self.activated = False
 
 
     def draw(self, screen):
@@ -78,6 +78,7 @@ class InputBox:
                             self.store_text += event.unicode
                         else:
                             self.text += event.unicode
+
 def handle_menu_event(mode):
     if mode == 0:
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -181,17 +182,16 @@ options_button = Button(10, 465, "Options_Unselected", "Options_Selected")
 quit_button = Button(window_width-150-10, 465, "Quit_Unselected", "Quit_Selected")
 
 # Options
-login_button = Button(10, 315, "Login_Unselected", "Login_Selected")
-register_button = Button(10, 390, "Register_Unselected", "Register_Selected")
-
+login_button = Button(175, 465, "Login_Unselected", "Login_Selected")
+register_button = Button(10, 465, "Register_Unselected", "Register_Selected")
 
 # Universal Button
 return_button = Button(window_width-150-10, 465, "Return_Unselected", "Return_Selected")
 
-email = InputBox("Email:", False, 450, 200, 200, 25, False)
-username = InputBox("Username:", False, 450, 250, 200, 25, False)
-password_1 = InputBox("Password:", True, 450, 300, 200, 25, False)
-password_2 = InputBox("Confirm Password:", True, 450, 350, 200, 25, False)
+email = InputBox("Email:", 50, 200, 200, 25)
+username = InputBox("Username:", 50, 250, 200, 25)
+password_1 = InputBox("Password:", 50, 300, 200, 25, True)
+password_2 = InputBox("Confirm Password:", 50, 350, 200, 25, True)
 
 
 mode = 0
