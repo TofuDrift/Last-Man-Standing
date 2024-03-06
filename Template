@@ -51,7 +51,6 @@ class InputBox:
         text =  self.font.render(self.text, False, "#FFFFFF")
 
         if not self.activated:
-
             pygame.draw.rect(screen, '#FFFFFF', self.textbox_rect, 2)
         else:
             pygame.draw.rect(screen, '#00FF00', self.textbox_rect, 2)
@@ -74,13 +73,14 @@ class InputBox:
                     if self.masked:
                         self.store_text = self.store_text[:-1]
                 else:
+                    if event.key == pygame.KEYDOWN:
+                        if event.unicode in self.acceptable:
+                            if self.masked:
+                                self.store_text += event.unicode
+                                self.text += "*"
+                            else:
+                                self.text += event.unicode
 
-                    if event.unicode in self.acceptable:
-                        if self.masked:
-                            self.text += "*"
-                            self.store_text += event.unicode
-                        else:
-                            self.text += event.unicode
 
 def handle_menu_event(mode_event):
     if mode_event == 0: # Menu
