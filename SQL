@@ -1,42 +1,86 @@
 import sqlite3
 
-DBConnection = sqlite3.connect("Archive.db")
+DBConnection = sqlite3.connect("GUI/Archive.db")
 Cursor = DBConnection.cursor()
 
 with DBConnection:
     Cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY ,
-            username TEXT NOT NULL,
-            email Text NOT NULL,
-            password TEXT NOT NULL
+        CREATE TABLE IF NOT EXISTS Users (
+            ID INTEGER PRIMARY KEY ,
+            Username TEXT NOT NULL,
+            Email Text NOT NULL,
+            Password TEXT NOT NULL
         )
     ''')
 
+    Cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Details (
+                ID INTEGER PRIMARY KEY ,
+                Balance REAL NOT NULL,
+                Kills INTEGERS NOT NULL,
+                Deaths INTEGERS NOT NULL
+            )
+        ''')
 
-def InsertNew(Values):
+
+def InsertNew(username,email,password,balance=0,kills=0,deaths=0):
     with DBConnection:
-        Cursor.execute("INSERT INTO users (username, email,password) VALUES (?, ?)", (Values[0], Values[1], Values[2]))
+        Cursor.execute("INSERT INTO Users (Username, Email, Password) VALUES (?, ?, ?)",
+                       (username, email, password))
+        Cursor.execute("INSERT INTO Details (Balance, Kills, Deaths) VALUES (?, ?, ?)",
+                       (balance, kills, deaths))
 
 
 def Reset():
     with DBConnection:
-        Cursor.execute("SELECT MAX(id) FROM users")
-        table_size = Cursor.fetchone()
+        table_size = Cursor.execute("SELECT MAX(ID) FROM Users").fetchone()
         maxsize = int(table_size[0])
-        for i in range(2, maxsize + 1):
-            Cursor.execute("DELETE FROM users WHERE id = ?", (i,))
+        for i in range(0, maxsize + 1):
+            Cursor.execute("DELETE FROM Users WHERE ID = ?", (i,))
+            Cursor.execute("DELETE FROM Details WHERE ID = ?", (i,))
+
+def Get_ID(email):
+    value = Cursor.execute("SELECT ID FROM Users WHERE Email == ?", (email,)).fetchone()
+    return value
+
+def Check_Login(email, password):
+    with DBConnection:
+        value = Cursor.execute("SELECT ID FROM Users WHERE Email == ?", (email,)).fetchone()
+        value_2 = Cursor.execute(f"SELECT Password FROM Users WHERE ID == ?", (str(value),)).fetchone()
+        return str(value_2) == password
 
 
 def UsernameFind(Value):
     with DBConnection:
-        Cursor.execute("SELECT id FROM users WHERE username == ?", (Value,))
-        val = Cursor.fetchone()
-        return bool(val)
+        value = Cursor.execute("SELECT ID FROM Users WHERE Username == ?", (Value,)).fetchone()
+        return bool(value)
+
+def EmailFind(Value):
+    with DBConnection:
+        value = Cursor.execute("SELECT ID FROM Users WHERE Email == ?", (Value,)).fetchone()
+        return bool(value)
 
 
 def PasswordFind(Value):
     with DBConnection:
-        Cursor.execute("SELECT id FROM users WHERE password == ?", (Value,))
-        val = Cursor.fetchone()
-        return bool(val)
+        value = Cursor.execute("SELECT ID FROM Users WHERE Password == ?", (Value,)).fetchone()
+        return bool(value)
+
+def BalanceFind(Value):
+    with DBConnection:
+        value = Cursor.execute("SELECT ID FROM Users WHERE Balance == ?", (Value,)).fetchone()
+        return bool(value)
+
+
+def KillsFind(Value):
+    with DBConnection:
+        value = Cursor.execute("SELECT ID FROM Users WHERE Kills == ?", (Value,)).fetchone()
+        return bool(value)
+
+
+def DeathsFind(Value):
+    with DBConnection:
+        value = Cursor.execute("SELECT ID FROM Users WHERE Deaths == ?", (Value,)).fetchone()
+        return bool(value)
+
+#Reset()
