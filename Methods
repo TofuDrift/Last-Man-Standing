@@ -10,34 +10,39 @@ def xflip(image, xbool):
     elif xbool == True:
         return pygame.transform.flip(image, True, False)
 
-
-def yflip(image, ybool):
-    if ybool == False:
-        return pygame.transform.flip(image, False, False)
-    elif ybool == True:
-        return pygame.transform.flip(image, True, False)
-
-
 def imageload(image, type):
     if ".png" not in image:
-        return pygame.image.load(f"UI_Buttons\{type}_Buttons\{image}.png")
+        return pygame.image.load(f"UI Buttons\{type} Buttons\{image}.png")
     else:
-        return pygame.image.load(f"UI_Buttons\{type}_Buttons\{image}")
+        return pygame.image.load(f"UI Buttons\{type} Buttons\{image}")
 
 
-def blit_lines(surface, text, pos, font, color=pygame.Color('red')):
-    words = [word.split('\n') for word in text.splitlines()]
-    space = font.size(' ')[0]
-    max_width = 3 * surface.get_width() / 4
-    x, y = pos
-    for line in words:
-        for word in line:
-            word_surface = font.render(word, 0, color)
-            word_width, word_height = word_surface.get_size()
-            if x + word_width >= max_width:
-                x = pos[0]  # Reset the x.
-                y += word_height  # Start on new row.
-            surface.blit(word_surface, (x, y))
-            x += word_width + space
-        x = pos[0]  # Reset the x.
-        y += word_height  # Start on new row.
+def check_password(password):
+    upper = False
+    num = False
+    special = False
+    errorMessages = []
+
+    for i in password:
+        if i.isupper():
+            upper = True
+    for i in password:
+        if i.isalnum():
+            num = True
+
+    if not password.isalnum():
+        special = True
+
+    if upper and num and special:
+        return True
+
+    if len(password) < 8:
+        errorMessages.append("Password is not 8 characters long.")
+    if not special:
+        errorMessages.append("Password does not contain special characters.")
+    if not upper:
+        errorMessages.append("Password does not contain uppercase.")
+    if not num:
+        errorMessages.append("Password does not contain lowercase or numerical value.")
+    return False, errorMessages
+
