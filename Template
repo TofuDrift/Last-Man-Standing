@@ -73,13 +73,13 @@ class InputBox:
                     if self.masked:
                         self.store_text = self.store_text[:-1]
                 else:
-                    if event.key == pygame.KEYDOWN:
-                        if event.unicode in self.acceptable:
-                            if self.masked:
-                                self.store_text += event.unicode
-                                self.text += "*"
-                            else:
-                                self.text += event.unicode
+                    #if event.unicode in self.acceptable:
+                    if event.key not in [pygame.K_TAB, pygame.K_KP_ENTER, pygame.K_RETURN, pygame.KMOD_SHIFT]:
+                        if self.masked:
+                            self.store_text += event.unicode
+                            self.text += "*"
+                        else:
+                            self.text += event.unicode
 
 
 def handle_menu_event(mode_event):
@@ -237,10 +237,10 @@ while is_running:
         if event.type == pygame.QUIT:
             is_running = False
 
+        mode = handle_menu_event(mode)
         if mode == -1:
             user_id = Get_ID(email.text)
-            mode = 3
-        mode = handle_menu_event(mode)
+            mode = handle_menu_event(0)
 
 
 
