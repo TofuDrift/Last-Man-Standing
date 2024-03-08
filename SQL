@@ -41,13 +41,13 @@ def Reset():
 
 def Get_ID(email):
     value = Cursor.execute("SELECT ID FROM Users WHERE Email == ?", (email,)).fetchone()
-    return value
+    return str(value[0])
 
 def Check_Login(email, password):
     with DBConnection:
         value = Cursor.execute("SELECT ID FROM Users WHERE Email == ?", (email,)).fetchone()
-        value_2 = Cursor.execute(f"SELECT Password FROM Users WHERE ID == ?", (str(value),)).fetchone()
-        return str(value_2) == password
+        value_2 = Cursor.execute(f"SELECT Password FROM Users WHERE ID == ?", (str(value[0]),)).fetchone()
+        return str(value_2[0]) == password
 
 
 def UsernameFind(Value):
