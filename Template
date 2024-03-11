@@ -255,7 +255,6 @@ def handle_menu_event(mode_event):
                 return 3
         return 6
 
-
 def update_ui(mode_ui):
     if mode_ui == 0:  # Menu UI
         window_surface.blit(title, title.get_rect(center=(500, 75)))
@@ -289,6 +288,41 @@ def update_ui(mode_ui):
         password_1_register.draw(window_surface)
         password_2_register.draw(window_surface)
 
+def animation(motion, transition, x, y):
+    background_rect = background.get_rect(center=(x, y))
+    if transition == 0:
+        if x < 500:
+            x += 5
+        elif x > 500:
+            x -= 5
+        else:
+            if not motion:
+                y -= 0.2
+                if y <= 240:
+                    motion = True
+            else:
+                y += 0.2
+                if y >= 260:
+                    motion = False
+
+    else:
+        if x < 750:
+            x += 5
+        elif x > 750:
+            x -= 5
+        else:
+            if not motion:
+                y -= 0.2
+                if y <= 240:
+                    motion = True
+            else:
+                y += 0.2
+                if y >= 260:
+                    motion = False
+
+    window_surface.blit(background, background_rect)
+    update_ui(transition)
+    return motion, x, y
 
 pygame.init()
 
@@ -330,7 +364,7 @@ submit_button = Button(window_width - 300 - 25, 465, "Submit_Unselected", "Submi
 
 mode = 0
 
-motion_up = False
+motion = False
 x, y = 500, 250
 background_rect = background.get_rect(center=(x, y))
 
@@ -343,23 +377,8 @@ while is_running:
             is_running = False
 
         mode = handle_menu_event(mode)
-        if mode == -1:
-            user_id = Get_ID(email_register.text)
-            mode = 0
-            print(user_id)
 
-    background_rect = background.get_rect(center=(500, y))
-    if not motion_up:
-        y -= 0.2
-        if y <= 240:
-            motion_up = True
-    else:
-        y += 0.2
-        if y >= 260:
-            motion_up = False
+    motion, x, y = animation(motion, mode, x, y)
 
-    window_surface.blit(background, background_rect)
-
-    update_ui(mode)
     pygame.display.update()
     clock.tick(60)
