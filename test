@@ -305,7 +305,7 @@ def animation(motion, transition, x, y):
                 if y >= 260:
                     motion = False
 
-    elif transition == 3:
+    else:
         if x < 750:
             x += 5
         elif x > 750:
