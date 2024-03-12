@@ -1,0 +1,6 @@
+class Player:
+  def__init__(x, y, width, height):
+    self.pox_x = x
+    self.pos_y = y
+    self.width = width
+    self.height = height
