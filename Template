@@ -262,8 +262,8 @@ def handle_menu_event(mode_event):
             mouse_pos = pygame.mouse.get_pos()
             if return_button.is_clicked(mouse_pos):
                 return 3
-            elif submit_button.is_clicked(mouse_pos):
-
+            #elif submit_button.is_clicked(mouse_pos):
+                
         return 6
 
 def update_ui(mode_ui):
