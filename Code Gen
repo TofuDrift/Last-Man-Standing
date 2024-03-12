@@ -1,0 +1,14 @@
+import random as r
+def code_gen():
+    code = ""
+    for i in range(8):
+        num_or_chr = r.randint(0,1)
+
+        if num_or_chr == 0:
+            code += f"{r.randint(0,9)}"
+        elif num_or_chr == 1:
+            code += f"{chr(r.randint(65, 90))}"
+    return code
+
+for i in range(5):
+    print(code_gen())
